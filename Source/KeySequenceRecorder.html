@@ -1,0 +1,105 @@
+<html>
+<body>
+
+<div id="divUI">
+ 
+	<h3>Sequence Recorder</h3>
+
+	<p>
+		Click the Record button, press and release a few keys on the keyboard,
+		and then click the Stop button.  Then click the Export button to see
+		a text representation of the sequence of keys pressed.
+	</p>
+
+	<div>
+		<button onclick="buttonRecord_Clicked();">Record</button>
+		<button onclick="buttonStop_Clicked();">Stop</button>
+		<button onclick="buttonPlay_Clicked();">Play</button></div>
+	<div id="divDisplay"></div>
+
+	<div>
+		<label>Sequence Serialized:</label>
+		<button onclick="buttonExport_Clicked();">Export</button>
+		<button onclick="buttonImport_Clicked();">Import</button>
+		<br />
+		<textarea id="textareaSequenceSerialized" cols="60" rows="10"></textarea>
+	</div>
+
+</div>
+
+<script type="text/javascript" src="Coords.js"></script>
+<script type="text/javascript" src="Display.js"></script>
+<script type="text/javascript" src="Event.js"></script>
+<script type="text/javascript" src="InputHelper.js"></script>
+<script type="text/javascript" src="Sequence.js"></script>
+<script type="text/javascript" src="Session.js"></script>
+<script type="text/javascript" src="SessionStatus.js"></script>
+<script type="text/javascript" src="Span.js"></script>
+<script type="text/javascript" src="Track.js"></script>
+
+<script type="text/javascript">
+ 
+// event handlers
+ 
+function buttonImport_Clicked()
+{
+	var textareaSequenceSerialized =
+	document.getElementById("textareaSequenceSerialized");
+	var sequenceSerialized = textareaSequenceSerialized.value;
+	var sequence = Sequence.deserialize(sequenceSerialized);
+	var session = Session.Instance();
+	session.sequenceRecorded = sequence;
+	session.draw();
+}
+ 
+function buttonExport_Clicked()
+{
+	var sequence = Session.Instance().sequenceRecorded;
+	var sequenceSerialized = sequence.serialize();
+	var textareaSequenceSerialized =
+	document.getElementById("textareaSequenceSerialized");
+	textareaSequenceSerialized.value = sequenceSerialized;
+}
+
+function buttonPlay_Clicked()
+{
+	Session.Instance().play();
+}
+ 
+function buttonRecord_Clicked()
+{
+	Session.Instance().record();
+}
+ 
+function buttonStop_Clicked()
+{
+	Session.Instance().stop();
+}
+ 
+// extensions
+ 
+Array.prototype.addLookups = function(keyName)
+{
+	for (var i = 0; i < this.length; i++)
+	{
+		var element = this[i];
+		var key = element[keyName];
+		this[key] = element;
+	}
+	return this;
+}
+ 
+Array.prototype.remove = function(element)
+{
+	var elementIndex = this.indexOf(element);
+	if (elementIndex != -1)
+	{
+		this.splice(elementIndex, 1);
+	}
+	return this;
+}
+
+</script>
+
+</body>
+</html>
